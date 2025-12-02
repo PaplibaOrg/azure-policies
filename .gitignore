@@ -1,0 +1,48 @@
+# Azure CLI
+.azure/
+
+# Environment files
+.env
+*.env.local
+
+# IDE
+.vscode/
+.idea/
+.cursor/
+!.cursor/settings.json
+!.cursor/mcp.json
+!.cursorrules
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets (never commit these)
+**/secrets/
+*.pem
+*.key
+
+# Node
+node_modules/
+package-lock.json
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+# .tfvars files are committed - they contain non-sensitive infrastructure configuration
+# If you need to ignore sensitive tfvars files, add patterns like:
+# *.secrets.tfvars
+# *.local.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+# .terraform.lock.hcl - Should be committed for consistent provider versions
+# Uncomment the line above only if you have cross-platform compatibility issues

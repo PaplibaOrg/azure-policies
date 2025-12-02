@@ -1,0 +1,27 @@
+{
+  "name": "azure-policies",
+  "version": "1.0.0",
+  "description": "Terraform modules for Azure Policy definitions, initiatives, and assignments following CAF best practices.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PaplibaOrg/azure-policies.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/PaplibaOrg/azure-policies/issues"
+  },
+  "homepage": "https://github.com/PaplibaOrg/azure-policies#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "husky": "^9.1.7"
+  }
+}

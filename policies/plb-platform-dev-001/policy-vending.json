@@ -1,0 +1,29 @@
+{
+  "environment": "dev",
+  "version": "1.0.0",
+  "tags": {
+    "owner": "sunny.bharne",
+    "application": "vending"
+  },
+  "additional_tags": {
+    "costCenter": "platform",
+    "project": "policy-management"
+  },
+  "policy_definitions": {
+    "require-tag-environment": {
+      "name": "require-tag-environment",
+      "display_name": "Require Environment Tag",
+      "description": "Ensures all resources have an environment tag",
+      "policy_rule": "{\"if\":{\"allOf\":[{\"field\":\"type\",\"equals\":\"Microsoft.Resources/subscriptions/resourceGroups\"},{\"field\":\"tags.environment\",\"exists\":false}]},\"then\":{\"effect\":\"deny\"}}"
+    }
+  },
+  "policy_initiatives": {},
+  "policy_assignments": {
+    "assign-require-tag-environment": {
+      "name": "assign-require-tag-environment",
+      "display_name": "Assign Require Environment Tag Policy",
+      "scope": "/providers/Microsoft.Management/managementGroups/dev-plb-platform",
+      "policy_definition_id": "/providers/Microsoft.Management/managementGroups/dev-plb-platform/providers/Microsoft.Authorization/policyDefinitions/require-tag-environment"
+    }
+  }
+}
