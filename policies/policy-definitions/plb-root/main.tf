@@ -24,7 +24,9 @@ locals {
 
   # Management group ID is the folder name - extract from current working directory
   # In pipeline, we cd into this directory, so path.cwd will have the full path
-  management_group_id = reverse(split("/", path.cwd))[0]
+  # Format: /providers/Microsoft.Management/managementGroups/{name}
+  mg_name = reverse(split("/", path.cwd))[0]
+  management_group_id = "/providers/Microsoft.Management/managementGroups/${local.mg_name}"
 
   # Parse each JSON file as a policy definition
   raw_policy_definitions = {
