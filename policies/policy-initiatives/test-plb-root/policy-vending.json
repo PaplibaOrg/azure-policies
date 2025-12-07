@@ -1,5 +1,5 @@
 {
-  "environment": "dev",
+  "environment": "test",
   "version": "1.0.0",
   "tags": {
     "owner": "sunny.bharne",
@@ -22,3 +22,4 @@
     }
   }
 }
+

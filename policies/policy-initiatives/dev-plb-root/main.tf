@@ -22,8 +22,11 @@ locals {
   # Recursively find all JSON files at any depth using ** pattern
   json_files = fileset("${path.module}", "**/*.json")
 
-  # Management group ID is the folder name
-  management_group_id = basename(path.module)
+  # Management group ID is the folder name - extract from current working directory
+  # In pipeline, we cd into this directory, so path.cwd will have the full path
+  # Format: /providers/Microsoft.Management/managementGroups/{name}
+  mg_name = reverse(split("/", path.cwd))[0]
+  management_group_id = "/providers/Microsoft.Management/managementGroups/${local.mg_name}"
 
   # Decode JSON once per file and filter out files that have policy_initiatives
   raw_json_files = {
@@ -58,7 +61,24 @@ module "policy_initiatives" {
     for file_key, file_data in local.json_object_map :
     {
       for key, value in lookup(file_data, "policy_initiatives", {}) :
-      "${file_key}-${key}" => value
+      "${file_key}-${key}" => merge(
+        value,
+        {
+          # Convert policy definition references: if policy_definition_name is provided, construct full ID
+          # Otherwise use policy_definition_id as-is
+          policy_definition_reference = [
+            for ref in lookup(value, "policy_definition_reference", []) :
+            {
+              policy_definition_id = can(ref.policy_definition_name) ? (
+                "${local.management_group_id}/providers/Microsoft.Authorization/policyDefinitions/${ref.policy_definition_name}"
+              ) : ref.policy_definition_id
+              parameter_values   = try(ref.parameter_values, null)
+              reference_id       = try(ref.reference_id, null)
+              policy_group_names = try(ref.policy_group_names, null)
+            }
+          ]
+        }
+      )
     }
   ]...)
 
