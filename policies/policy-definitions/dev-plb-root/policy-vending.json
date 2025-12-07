@@ -1,43 +1,27 @@
 {
-  "environment": "dev",
-  "version": "1.0.0",
-  "tags": {
-    "owner": "sunny.bharne",
-    "application": "vending"
+  "displayName": "Require Environment Tag",
+  "policyType": "Custom",
+  "mode": "All",
+  "description": "Ensures all resources have an environment tag",
+  "metadata": {
+    "category": "Tags"
   },
-  "additional_tags": {
-    "costCenter": "platform",
-    "project": "policy-management"
-  },
-  "policy_definitions": {
-    "require-tag-environment": {
-      "properties": {
-        "displayName": "Require Environment Tag",
-        "policyType": "Custom",
-        "mode": "All",
-        "description": "Ensures all resources have an environment tag",
-        "metadata": {
-          "category": "Tags"
+  "parameters": {},
+  "policyRule": {
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "equals": "Microsoft.Resources/subscriptions/resourceGroups"
         },
-        "parameters": {},
-        "policyRule": {
-          "if": {
-            "allOf": [
-              {
-                "field": "type",
-                "equals": "Microsoft.Resources/subscriptions/resourceGroups"
-              },
-              {
-                "field": "tags.environment",
-                "exists": false
-              }
-            ]
-          },
-          "then": {
-            "effect": "deny"
-          }
+        {
+          "field": "tags.environment",
+          "exists": false
         }
-      }
+      ]
+    },
+    "then": {
+      "effect": "deny"
     }
   }
 }

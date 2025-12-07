@@ -10,18 +10,21 @@ locals {
     var.additional_tags
   )
 
-  # Parse policy definitions - support both full Azure format (with properties) and simplified format
+  # Parse policy definitions - support multiple formats:
+  # 1. Direct Azure format (displayName, policyType, etc. at root level) - NEW FORMAT
+  # 2. Wrapped in properties object
+  # 3. Simplified format (backward compatibility)
   parsed_policy_definitions = {
     for key, value in var.policy_definitions : key => {
       name                = key
-      policy_type         = can(value.properties) ? try(value.properties.policyType, "Custom") : try(value.policy_type, "Custom")
-      mode                = can(value.properties) ? try(value.properties.mode, "All") : try(value.mode, "All")
-      display_name        = can(value.properties) ? value.properties.displayName : value.display_name
-      description         = can(value.properties) ? try(value.properties.description, "") : try(value.description, "")
+      policy_type         = can(value.policyType) ? value.policyType : (can(value.properties.policyType) ? value.properties.policyType : try(value.policy_type, "Custom"))
+      mode                = can(value.mode) ? value.mode : (can(value.properties.mode) ? value.properties.mode : try(value.mode, "All"))
+      display_name        = can(value.displayName) ? value.displayName : (can(value.properties.displayName) ? value.properties.displayName : value.display_name)
+      description         = can(value.description) ? value.description : (can(value.properties.description) ? try(value.properties.description, "") : try(value.description, ""))
       management_group_id = try(value.management_group_id, null)
-      metadata            = can(value.properties) ? (can(value.properties.metadata) ? jsonencode(value.properties.metadata) : "{}") : try(value.metadata, "{}")
-      parameters          = can(value.properties) ? (can(value.properties.parameters) ? jsonencode(value.properties.parameters) : "{}") : try(value.parameters, "{}")
-      policy_rule         = can(value.properties) ? (can(value.properties.policyRule) ? jsonencode(value.properties.policyRule) : null) : value.policy_rule
+      metadata            = can(value.metadata) ? jsonencode(value.metadata) : (can(value.properties.metadata) ? jsonencode(value.properties.metadata) : try(value.metadata, "{}"))
+      parameters          = can(value.parameters) ? jsonencode(value.parameters) : (can(value.properties.parameters) ? jsonencode(value.properties.parameters) : try(value.parameters, "{}"))
+      policy_rule         = can(value.policyRule) ? jsonencode(value.policyRule) : (can(value.properties.policyRule) ? jsonencode(value.properties.policyRule) : value.policy_rule)
     }
   }
 }

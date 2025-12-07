@@ -1,32 +1,35 @@
 locals {
-  # Recursively find all JSON files at any depth using ** pattern
-  json_files = fileset("${path.module}", "**/*.json")
+  # Recursively find all JSON files - each file is a policy definition
+  json_files = fileset("${path.module}", "*.json")
 
-  # Decode JSON once per file and filter out files that have policy_definitions
-  raw_json_files = {
-    for file in local.json_files :
-    file => jsondecode(file("${path.module}/${file}"))
-    if can(jsondecode(file("${path.module}/${file}")).environment) &&
-    can(jsondecode(file("${path.module}/${file}")).policy_definitions)
+  # Extract environment from folder name (e.g., dev-plb-root -> dev)
+  environment = split("-", basename(path.module))[0]
+
+  # Default tags
+  default_tags = {
+    owner       = "platform-team"
+    application = "policy-management"
   }
 
-  # Final map used for for_each - use a unique key based on file path
-  json_object_map = {
-    for key, json_data in local.raw_json_files :
-    replace(key, ".json", "") => json_data
+  default_additional_tags = {
+    managedBy = "terraform"
+  }
+
+  # Parse each JSON file as a policy definition
+  policy_definitions = {
+    for file in local.json_files :
+    replace(basename(file), ".json", "") => jsondecode(file("${path.module}/${file}"))
   }
 }
 
 module "policies" {
   source = "../../../modules/services/policies"
 
-  for_each = local.json_object_map
+  environment     = local.environment
+  tags            = local.default_tags
+  additional_tags = local.default_additional_tags
 
-  environment     = each.value.environment
-  tags            = lookup(each.value, "tags", {})
-  additional_tags = lookup(each.value, "additional_tags", {})
-
-  policy_definitions  = lookup(each.value, "policy_definitions", {})
+  policy_definitions  = local.policy_definitions
   policy_initiatives  = {}
   policy_assignments  = {}
 }
