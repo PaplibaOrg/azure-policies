@@ -4,7 +4,8 @@
   "mode": "All",
   "description": "Ensures all resources have an environment tag",
   "metadata": {
-    "category": "Tags"
+    "category": "Tags",
+    "version": "1.0.0"
   },
   "parameters": {},
   "policyRule": {
