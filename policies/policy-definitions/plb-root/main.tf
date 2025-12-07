@@ -1,32 +1,34 @@
 locals {
-  # Recursively find all JSON files at any depth using ** pattern
-  json_files = fileset("${path.module}", "**/*.json")
+  # Recursively find all JSON files - each file is a policy definition
+  json_files = fileset("${path.module}", "*.json")
 
-  # Decode JSON once per file and filter out files that have policy_definitions
-  raw_json_files = {
+  # Management group ID is the folder name
+  management_group_id = basename(path.module)
+
+  # Parse each JSON file as a policy definition
+  raw_policy_definitions = {
     for file in local.json_files :
-    file => jsondecode(file("${path.module}/${file}"))
-    if can(jsondecode(file("${path.module}/${file}")).environment) &&
-    can(jsondecode(file("${path.module}/${file}")).policy_definitions)
+    replace(basename(file), ".json", "") => jsondecode(file("${path.module}/${file}"))
   }
 
-  # Final map used for for_each - use a unique key based on file path
-  json_object_map = {
-    for key, json_data in local.raw_json_files :
-    replace(key, ".json", "") => json_data
+  # Add management_group_id to each policy definition
+  policy_definitions = {
+    for key, value in local.raw_policy_definitions :
+    key => merge(
+      value,
+      {
+        management_group_id = local.management_group_id
+      }
+    )
   }
 }
 
 module "policies" {
   source = "../../../modules/services/policies"
-
-  for_each = local.json_object_map
-
-  environment     = each.value.environment
-  tags            = lookup(each.value, "tags", {})
-  additional_tags = lookup(each.value, "additional_tags", {})
-
-  policy_definitions  = lookup(each.value, "policy_definitions", {})
+  environment     = var.environment
+  tags            = var.tags
+  additional_tags = var.additional_tags
+  policy_definitions  = local.policy_definitions
   policy_initiatives  = {}
   policy_assignments  = {}
 }
