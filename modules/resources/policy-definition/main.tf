@@ -10,6 +10,7 @@ resource "azurerm_policy_definition" "this" {
   parameters  = var.parameters
   policy_rule = var.policy_rule
 
-  tags = var.tags
+  # Note: azurerm_policy_definition does not support tags
+  # Tags variable is kept for backward compatibility but not used
 }
 
