@@ -52,9 +52,7 @@ locals {
 
 module "policy_definitions" {
   source = "../../../modules/resources/policy-definition"
-
   for_each = local.parsed_policy_definitions
-
   name                = each.value.name
   policy_type         = each.value.policy_type
   mode                = each.value.mode
