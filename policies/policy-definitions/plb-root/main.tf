@@ -43,8 +43,8 @@ locals {
       display_name        = can(value.displayName) ? value.displayName : (can(value.properties.displayName) ? value.properties.displayName : value.display_name)
       description         = can(value.description) ? value.description : (can(value.properties.description) ? try(value.properties.description, "") : try(value.description, ""))
       management_group_id = try(value.management_group_id, local.management_group_id)
-      metadata            = can(value.metadata) ? jsonencode(value.metadata) : (can(value.properties.metadata) ? jsonencode(value.properties.metadata) : try(value.metadata, "{}"))
-      parameters          = can(value.parameters) ? jsonencode(value.parameters) : (can(value.properties.parameters) ? jsonencode(value.properties.parameters) : try(value.parameters, "{}"))
+      metadata            = try(jsonencode(value.metadata), try(jsonencode(value.properties.metadata), try(value.metadata, "{}")))
+      parameters          = try(jsonencode(value.parameters), try(jsonencode(value.properties.parameters), try(value.parameters, "{}")))
       policy_rule         = can(value.policyRule) ? jsonencode(value.policyRule) : (can(value.properties.policyRule) ? jsonencode(value.properties.policyRule) : value.policy_rule)
     }
   }
