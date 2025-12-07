@@ -22,8 +22,8 @@ locals {
   # Recursively find all JSON files - each file is a policy definition
   json_files = fileset("${path.module}", "*.json")
 
-  # Management group ID is the folder name
-  management_group_id = basename(path.module)
+  # Management group ID is the folder name - extract from path
+  management_group_id = reverse(split("/", path.module))[0]
 
   # Parse each JSON file as a policy definition
   raw_policy_definitions = {
