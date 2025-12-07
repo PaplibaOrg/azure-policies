@@ -12,3 +12,4 @@ output "policy_assignment_identity" {
   description = "The identity of the policy assignment"
   value       = azurerm_policy_assignment.this.identity
 }
+

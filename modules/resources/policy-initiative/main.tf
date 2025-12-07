@@ -11,3 +11,4 @@ resource "azurerm_policy_set_definition" "this" {
 
   tags = var.tags
 }
+

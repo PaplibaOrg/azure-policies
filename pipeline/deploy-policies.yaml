@@ -2,6 +2,7 @@ trigger:
   branches:
     include:
       - main
+  batch: true
   paths:
     include:
       - policies/**
@@ -12,36 +13,61 @@ pool: default
 
 variables:
   serviceConnectionDev: 'id-policy-vending-eus-dev-001'
-  # serviceConnectionTest: 'id-policy-vending-eus-test-001'
-  # serviceConnectionProd: 'id-policy-vending-eus-prod-001'
+  serviceConnectionTest: 'id-policy-vending-eus-test-001'
+  serviceConnectionProd: 'id-policy-vending-eus-prod-001'
+  subscriptionIdDev: '243c3cf8-1a50-4b3c-a45e-0d1f0a82a37b'
+  subscriptionIdTest: 'b7762cc9-e968-4152-9cb5-f283738190f4'
+  subscriptionIdProd: 'ef4541ca-58de-411a-bed5-3127d75ee4a2'
+  # Backend configuration for Terraform state
+  backendResourceGroupNameDev: 'rg-tf-state-eus-dev-001'
+  backendStorageAccountNameDev: 'sttfstateeusdev001'
+  backendContainerNameDev: 'tfstate'
+  backendKeyDev: 'policies-dev.tfstate'
+  backendResourceGroupNameTest: 'rg-tf-state-eus-test-001'
+  backendStorageAccountNameTest: 'sttfstateeustest001'
+  backendContainerNameTest: 'tfstate'
+  backendKeyTest: 'policies-test.tfstate'
+  backendResourceGroupNameProd: 'rg-tf-state-eus-prod-001'
+  backendStorageAccountNameProd: 'sttfstateeusprod001'
+  backendContainerNameProd: 'tfstate'
+  backendKeyProd: 'policies-prod.tfstate'
 
 stages:
   # Dev Environment - Plan and Apply
   - template: templates/deploy-terraform.yaml
     parameters:
       serviceConnection: $(serviceConnectionDev)
-      environment: 'Dev'
-      workingDirectory: 'policies'
-      resourceType: 'Policy'
-      resourceDisplayName: 'Policies'
+      subscriptionId: $(subscriptionIdDev)
+      environment: 'dev'
+      workingDirectory: 'policies/dev-plb-root'
       runPlanInApply: false
+      backendResourceGroupName: $(backendResourceGroupNameDev)
+      backendStorageAccountName: $(backendStorageAccountNameDev)
+      backendContainerName: $(backendContainerNameDev)
+      backendKey: $(backendKeyDev)
 
-  # # Test Environment - Plan, Approval, Apply
-  # - template: templates/deploy-terraform.yaml
-  #   parameters:
-  #     serviceConnection: $(serviceConnectionTest)
-  #     environment: 'Test'
-  #     workingDirectory: 'policies'
-  #     resourceType: 'Policy'
-  #     resourceDisplayName: 'Policies'
-  #     runPlanInApply: false
+  # Test Environment - Plan and Apply
+  - template: templates/deploy-terraform.yaml
+    parameters:
+      serviceConnection: $(serviceConnectionTest)
+      subscriptionId: $(subscriptionIdTest)
+      environment: 'test'
+      workingDirectory: 'policies/test-plb-root'
+      runPlanInApply: false
+      backendResourceGroupName: $(backendResourceGroupNameTest)
+      backendStorageAccountName: $(backendStorageAccountNameTest)
+      backendContainerName: $(backendContainerNameTest)
+      backendKey: $(backendKeyTest)
 
-  # # Prod Environment - Plan, Approval, Apply
-  # - template: templates/deploy-terraform.yaml
-  #   parameters:
-  #     serviceConnection: $(serviceConnectionProd)
-  #     environment: 'Prod'
-  #     workingDirectory: 'policies'
-  #     resourceType: 'Policy'
-  #     resourceDisplayName: 'Policies'
-  #     runPlanInApply: false
+  # Prod Environment - Plan and Apply
+  - template: templates/deploy-terraform.yaml
+    parameters:
+      serviceConnection: $(serviceConnectionProd)
+      subscriptionId: $(subscriptionIdProd)
+      environment: 'prod'
+      workingDirectory: 'policies/plb-root'
+      runPlanInApply: false
+      backendResourceGroupName: $(backendResourceGroupNameProd)
+      backendStorageAccountName: $(backendStorageAccountNameProd)
+      backendContainerName: $(backendContainerNameProd)
+      backendKey: $(backendKeyProd)

@@ -20,10 +20,13 @@ azure-policies/
 │   └── services/
 │       └── policies/                 # Policy orchestration module
 ├── policies/                         # Policy deployment files
-│   ├── main.tf                      # Main deployment file
-│   ├── provider.tf                  # Terraform backend and provider config
-│   └── <mg-name>/                   # Management group folders
-│       └── policy-vending.json      # Policy configuration
+│   ├── dev-plb-root/                # Dev environment root
+│   │   ├── main.tf                  # Main deployment file
+│   │   ├── provider.tf              # Terraform backend and provider config
+│   │   └── platform/                # Platform policies
+│   │       └── policy-vending.json  # Policy configuration
+│   ├── test-plb-root/               # Test environment root
+│   └── plb-root/                    # Production environment root
 ├── pipeline/
 │   ├── deploy-policies.yaml
 │   └── templates/
@@ -70,7 +73,7 @@ npm install
 
 1. **Create Policy Configuration Files**
 
-   Create JSON files in `policies/<management-group-name>/` directory:
+   Create JSON files in the appropriate directory structure (e.g., `policies/dev-plb-root/platform/`), named as `<policy-name>.json`:
 
    ```json
    {
@@ -102,7 +105,7 @@ npm install
 
 2. **Update Terraform Backend**
 
-   Edit `policies/provider.tf` to configure your Terraform state backend:
+   Edit `policies/<environment>/provider.tf` to configure your Terraform state backend:
 
    ```hcl
    terraform {
@@ -160,7 +163,7 @@ Prod: Plan_Policy_Prod → Approval_Prod → Apply_Policy_Prod (when configured)
 ### Manual Deployment (Local)
 
 ```bash
-cd policies
+cd policies/dev-plb-root
 
 # Initialize Terraform
 terraform init
@@ -257,7 +260,7 @@ Policy rules are JSON strings following Azure Policy schema:
 
 ### JSON Configuration Format
 
-Each `policy-vending.json` file contains policy configuration:
+Each policy JSON file (e.g., `policy-vending.json`) contains policy configuration:
 
 ```json
 {
@@ -292,7 +295,7 @@ Each `policy-vending.json` file contains policy configuration:
 }
 ```
 
-The `main.tf` automatically reads all JSON files from subdirectories and creates policies for each configuration.
+The `main.tf` in each environment folder automatically reads all JSON files recursively from subdirectories and creates policies for each configuration.
 
 ## Development Workflow
 
@@ -365,3 +368,4 @@ git commit -m "fix"
 ## License
 
 ISC
+

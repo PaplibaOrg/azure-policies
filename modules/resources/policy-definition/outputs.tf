@@ -7,3 +7,4 @@ output "policy_definition_name" {
   description = "The name of the policy definition"
   value       = azurerm_policy_definition.this.name
 }
+

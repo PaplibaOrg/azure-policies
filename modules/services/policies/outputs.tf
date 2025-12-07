@@ -21,3 +21,4 @@ output "policy_assignment_ids" {
     key => assignment.policy_assignment_id
   }
 }
+

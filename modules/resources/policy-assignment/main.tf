@@ -17,3 +17,4 @@ resource "azurerm_policy_assignment" "this" {
 
   tags = var.tags
 }
+

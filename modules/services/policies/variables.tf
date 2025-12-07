@@ -70,3 +70,4 @@ variable "policy_assignments" {
   }))
   default = {}
 }
+
