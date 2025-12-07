@@ -43,15 +43,12 @@ locals {
   }
 
   # Convert tags object to map(string) for Azure
-  tags_map = merge(
-    {
-      environment = try(local.json_object_map[keys(local.json_object_map)[0]].environment, "")
-      owner       = try(lookup(local.json_object_map[keys(local.json_object_map)[0]], "tags", {}).owner, "")
-      application = try(lookup(local.json_object_map[keys(local.json_object_map)[0]], "tags", {}).application, "")
-      managedBy   = "terraform"
-    },
-    try(lookup(local.json_object_map[keys(local.json_object_map)[0]], "additional_tags", {}), {})
-  )
+  tags_map = {
+    environment = try(local.json_object_map[keys(local.json_object_map)[0]].environment, "")
+    owner       = try(lookup(local.json_object_map[keys(local.json_object_map)[0]], "tags", {}).owner, "")
+    application = try(lookup(local.json_object_map[keys(local.json_object_map)[0]], "tags", {}).application, "")
+    managedBy   = "terraform"
+  }
 }
 
 module "policy_initiatives" {
