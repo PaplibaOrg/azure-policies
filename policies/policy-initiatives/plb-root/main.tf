@@ -42,13 +42,6 @@ locals {
     replace(key, ".json", "") => json_data
   }
 
-  # Convert tags object to map(string) for Azure
-  tags_map = {
-    environment = try(local.json_object_map[keys(local.json_object_map)[0]].environment, "")
-    owner       = try(lookup(local.json_object_map[keys(local.json_object_map)[0]], "tags", {}).owner, "")
-    application = try(lookup(local.json_object_map[keys(local.json_object_map)[0]], "tags", {}).application, "")
-    managedBy   = "terraform"
-  }
 }
 
 module "policy_initiatives" {
@@ -87,5 +80,4 @@ module "policy_initiatives" {
   metadata            = lookup(each.value, "metadata", "{}")
   parameters          = lookup(each.value, "parameters", "{}")
   policy_definition_reference = each.value.policy_definition_reference
-  tags                = local.tags_map
 }

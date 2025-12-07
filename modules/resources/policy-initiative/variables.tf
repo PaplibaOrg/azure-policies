@@ -48,9 +48,3 @@ variable "policy_definition_reference" {
   }))
 }
 
-variable "tags" {
-  description = "Tags to apply to the policy set definition"
-  type        = map(string)
-  default     = {}
-}
-
