@@ -18,19 +18,9 @@ variable "additional_tags" {
 }
 
 variable "policy_definitions" {
-  description = "Map of policy definitions to create"
-  type = map(object({
-    name                = string
-    policy_type         = optional(string)
-    mode                = optional(string)
-    display_name        = string
-    description         = optional(string)
-    management_group_id = optional(string)
-    metadata            = optional(string)
-    parameters          = optional(string)
-    policy_rule         = string
-  }))
-  default = {}
+  description = "Map of policy definitions to create. Can be in full Azure policy definition format (with properties object) or simplified format (backward compatible)"
+  type        = map(any)
+  default     = {}
 }
 
 variable "policy_initiatives" {

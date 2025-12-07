@@ -9,22 +9,37 @@ locals {
     },
     var.additional_tags
   )
+
+  # Parse policy definitions - support both full Azure format (with properties) and simplified format
+  parsed_policy_definitions = {
+    for key, value in var.policy_definitions : key => {
+      name                = key
+      policy_type         = can(value.properties) ? try(value.properties.policyType, "Custom") : try(value.policy_type, "Custom")
+      mode                = can(value.properties) ? try(value.properties.mode, "All") : try(value.mode, "All")
+      display_name        = can(value.properties) ? value.properties.displayName : value.display_name
+      description         = can(value.properties) ? try(value.properties.description, "") : try(value.description, "")
+      management_group_id = try(value.management_group_id, null)
+      metadata            = can(value.properties) ? (can(value.properties.metadata) ? jsonencode(value.properties.metadata) : "{}") : try(value.metadata, "{}")
+      parameters          = can(value.properties) ? (can(value.properties.parameters) ? jsonencode(value.properties.parameters) : "{}") : try(value.parameters, "{}")
+      policy_rule         = can(value.properties) ? (can(value.properties.policyRule) ? jsonencode(value.properties.policyRule) : null) : value.policy_rule
+    }
+  }
 }
 
 # Policy Definitions
 module "policy_definitions" {
   source = "../../resources/policy-definition"
 
-  for_each = var.policy_definitions
+  for_each = local.parsed_policy_definitions
 
   name                = each.value.name
-  policy_type         = lookup(each.value, "policy_type", "Custom")
-  mode                = lookup(each.value, "mode", "All")
+  policy_type         = each.value.policy_type
+  mode                = each.value.mode
   display_name        = each.value.display_name
-  description         = lookup(each.value, "description", "")
-  management_group_id = lookup(each.value, "management_group_id", null)
-  metadata            = lookup(each.value, "metadata", "{}")
-  parameters          = lookup(each.value, "parameters", "{}")
+  description         = each.value.description
+  management_group_id = each.value.management_group_id
+  metadata            = each.value.metadata
+  parameters          = each.value.parameters
   policy_rule         = each.value.policy_rule
   tags                = local.tags_map
 }

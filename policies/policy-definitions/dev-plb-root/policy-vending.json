@@ -11,10 +11,33 @@
   },
   "policy_definitions": {
     "require-tag-environment": {
-      "name": "require-tag-environment",
-      "display_name": "Require Environment Tag",
-      "description": "Ensures all resources have an environment tag",
-      "policy_rule": "{\"if\":{\"allOf\":[{\"field\":\"type\",\"equals\":\"Microsoft.Resources/subscriptions/resourceGroups\"},{\"field\":\"tags.environment\",\"exists\":false}]},\"then\":{\"effect\":\"deny\"}}"
+      "properties": {
+        "displayName": "Require Environment Tag",
+        "policyType": "Custom",
+        "mode": "All",
+        "description": "Ensures all resources have an environment tag",
+        "metadata": {
+          "category": "Tags"
+        },
+        "parameters": {},
+        "policyRule": {
+          "if": {
+            "allOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+              },
+              {
+                "field": "tags.environment",
+                "exists": false
+              }
+            ]
+          },
+          "then": {
+            "effect": "deny"
+          }
+        }
+      }
     }
   }
 }
