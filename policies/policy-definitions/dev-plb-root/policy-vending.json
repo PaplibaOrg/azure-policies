@@ -24,8 +24,8 @@
           "equals": "Microsoft.Resources/subscriptions"
         },
         {
-          "field": "name",
           "not": {
+            "field": "name",
             "match": "[concat('^', parameters('companyPrefix'), '-[a-zA-Z0-9_-]+-(dev|test|prod)-[0-9]{3}$')]"
           }
         }
