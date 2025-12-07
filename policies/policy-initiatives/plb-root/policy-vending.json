@@ -5,10 +5,6 @@
     "owner": "sunny.bharne",
     "application": "vending"
   },
-  "additional_tags": {
-    "costCenter": "platform",
-    "project": "policy-management"
-  },
   "policy_initiatives": {
     "subscription-naming-initiative": {
       "name": "subscription-naming-initiative",
