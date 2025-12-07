@@ -2,12 +2,21 @@
   "displayName": "Enforce Subscription Name Format",
   "policyType": "Custom",
   "mode": "All",
-  "description": "Ensures all subscriptions follow the naming convention: plb-<application-name>-dev/test/prod-<sequence> where sequence is exactly 3 digits",
+  "description": "Ensures all subscriptions follow the naming convention: <companyPrefix>-<application-name>-dev/test/prod-<sequence> where companyPrefix is a parameter and sequence is exactly 3 digits",
   "metadata": {
     "category": "Naming",
     "version": "1.0.0"
   },
-  "parameters": {},
+  "parameters": {
+    "companyPrefix": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Company Prefix",
+        "description": "The company prefix for subscription names (e.g., plb)"
+      },
+      "defaultValue": "plb"
+    }
+  },
   "policyRule": {
     "if": {
       "allOf": [
@@ -18,7 +27,7 @@
         {
           "field": "name",
           "not": {
-            "match": "^plb-[a-zA-Z0-9_-]+-(dev|test|prod)-[0-9]{3}$"
+            "match": "[concat('^', parameters('companyPrefix'), '-[a-zA-Z0-9_-]+-(dev|test|prod)-[0-9]{3}$')]"
           }
         }
       ]
