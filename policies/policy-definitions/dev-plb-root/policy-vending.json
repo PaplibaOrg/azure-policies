@@ -12,9 +12,8 @@
       "type": "String",
       "metadata": {
         "displayName": "Company Prefix",
-        "description": "The company prefix for subscription names (e.g., plb)"
-      },
-      "defaultValue": "plb"
+        "description": "The company prefix for subscription names. This parameter is required and must be provided when assigning the policy."
+      }
     }
   },
   "policyRule": {
