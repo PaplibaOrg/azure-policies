@@ -1,3 +1,47 @@
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "rg-tf-state-eus-prod-001"
+    storage_account_name = "sttfstateeusprod001"
+    container_name       = "tfstate"
+    key                  = "policy-definitions-prod.tfstate"
+  }
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.5"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+variable "environment" {
+  description = "Environment name (not used for policy definitions, but required by module)"
+  type        = string
+  default     = ""
+}
+
+variable "tags" {
+  description = "Base tags object (not used for policy definitions, but required by module)"
+  type = object({
+    owner       = string
+    application = string
+  })
+  default = {
+    owner       = ""
+    application = ""
+  }
+}
+
+variable "additional_tags" {
+  description = "Additional tags (not used for policy definitions, but required by module)"
+  type        = map(string)
+  default     = {}
+}
+
 locals {
   # Recursively find all JSON files - each file is a policy definition
   json_files = fileset("${path.module}", "*.json")
