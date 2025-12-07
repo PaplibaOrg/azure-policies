@@ -6,7 +6,6 @@ trigger:
   paths:
     include:
       - policies/policy-initiatives/**
-      - modules/services/policies/**
       - modules/resources/policy-initiative/**
       - pipeline/deploy-policy-initiatives.yaml
       - pipeline/templates/deploy-terraform.yaml
