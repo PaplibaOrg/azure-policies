@@ -26,6 +26,8 @@ locals {
 module "policies" {
   source = "../../../modules/services/policies"
 
+  # Tags are not needed for policy definitions (they don't support tags)
+  # Only required if creating policy initiatives or assignments
   environment     = var.environment
   tags            = var.tags
   additional_tags = var.additional_tags
