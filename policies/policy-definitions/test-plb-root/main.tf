@@ -18,30 +18,6 @@ provider "azurerm" {
   features {}
 }
 
-variable "environment" {
-  description = "Environment name (not used for policy definitions, but required by module)"
-  type        = string
-  default     = ""
-}
-
-variable "tags" {
-  description = "Base tags object (not used for policy definitions, but required by module)"
-  type = object({
-    owner       = string
-    application = string
-  })
-  default = {
-    owner       = ""
-    application = ""
-  }
-}
-
-variable "additional_tags" {
-  description = "Additional tags (not used for policy definitions, but required by module)"
-  type        = map(string)
-  default     = {}
-}
-
 locals {
   # Recursively find all JSON files - each file is a policy definition
   json_files = fileset("${path.module}", "*.json")
@@ -55,24 +31,37 @@ locals {
     replace(basename(file), ".json", "") => jsondecode(file("${path.module}/${file}"))
   }
 
-  # Add management_group_id to each policy definition
-  policy_definitions = {
-    for key, value in local.raw_policy_definitions :
-    key => merge(
-      value,
-      {
-        management_group_id = local.management_group_id
-      }
-    )
+  # Parse policy definitions - support multiple formats:
+  # 1. Direct Azure format (displayName, policyType, etc. at root level)
+  # 2. Wrapped in properties object
+  # 3. Simplified format (backward compatibility)
+  parsed_policy_definitions = {
+    for key, value in local.raw_policy_definitions : key => {
+      name                = key
+      policy_type         = can(value.policyType) ? value.policyType : (can(value.properties.policyType) ? value.properties.policyType : try(value.policy_type, "Custom"))
+      mode                = can(value.mode) ? value.mode : (can(value.properties.mode) ? value.properties.mode : try(value.mode, "All"))
+      display_name        = can(value.displayName) ? value.displayName : (can(value.properties.displayName) ? value.properties.displayName : value.display_name)
+      description         = can(value.description) ? value.description : (can(value.properties.description) ? try(value.properties.description, "") : try(value.description, ""))
+      management_group_id = try(value.management_group_id, local.management_group_id)
+      metadata            = can(value.metadata) ? jsonencode(value.metadata) : (can(value.properties.metadata) ? jsonencode(value.properties.metadata) : try(value.metadata, "{}"))
+      parameters          = can(value.parameters) ? jsonencode(value.parameters) : (can(value.properties.parameters) ? jsonencode(value.properties.parameters) : try(value.parameters, "{}"))
+      policy_rule         = can(value.policyRule) ? jsonencode(value.policyRule) : (can(value.properties.policyRule) ? jsonencode(value.properties.policyRule) : value.policy_rule)
+    }
   }
 }
 
-module "policies" {
-  source = "../../../modules/services/policies"
-  environment     = var.environment
-  tags            = var.tags
-  additional_tags = var.additional_tags
-  policy_definitions  = local.policy_definitions
-  policy_initiatives  = {}
-  policy_assignments  = {}
+module "policy_definitions" {
+  source = "../../../modules/resources/policy-definition"
+
+  for_each = local.parsed_policy_definitions
+
+  name                = each.value.name
+  policy_type         = each.value.policy_type
+  mode                = each.value.mode
+  display_name        = each.value.display_name
+  description         = each.value.description
+  management_group_id = each.value.management_group_id
+  metadata            = each.value.metadata
+  parameters          = each.value.parameters
+  policy_rule         = each.value.policy_rule
 }
