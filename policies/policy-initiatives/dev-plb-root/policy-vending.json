@@ -6,10 +6,10 @@
     "application": "vending"
   },
   "policy_initiatives": {
-    "subscription-naming-initiative": {
-      "name": "subscription-naming-initiative",
-      "display_name": "Subscription Naming Initiative",
-      "description": "Initiative to enforce subscription naming conventions",
+    "naming-convention": {
+      "name": "naming-convention",
+      "display_name": "Naming Convention Initiative",
+      "description": "Initiative to enforce naming conventions for Azure resources",
       "policy_definition_reference": [
         {
           "policy_definition_name": "policy-vending"
