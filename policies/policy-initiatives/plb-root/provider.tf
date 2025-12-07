@@ -1,9 +1,9 @@
 terraform {
   backend "azurerm" {
-    resource_group_name  = "rg-tf-state-eus-test-001"
-    storage_account_name = "sttfstateeustest001"
+    resource_group_name  = "rg-tf-state-eus-prod-001"
+    storage_account_name = "sttfstateeusprod001"
     container_name       = "tfstate"
-    key                  = "policies-test.tfstate"
+    key                  = "policy-initiatives-prod.tfstate"
   }
 
   required_providers {

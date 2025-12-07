@@ -20,15 +20,26 @@ azure-policies/
 │   └── services/
 │       └── policies/                 # Policy orchestration module
 ├── policies/                         # Policy deployment files
-│   ├── dev-plb-root/                # Dev environment root
-│   │   ├── main.tf                  # Main deployment file
-│   │   ├── provider.tf              # Terraform backend and provider config
-│   │   └── platform/                # Platform policies
-│   │       └── policy-vending.json  # Policy configuration
-│   ├── test-plb-root/               # Test environment root
-│   └── plb-root/                    # Production environment root
+│   ├── policy-definitions/          # Policy definitions
+│   │   ├── dev-plb-root/
+│   │   │   ├── main.tf
+│   │   │   ├── provider.tf
+│   │   │   └── platform/
+│   │   │       └── policy-vending.json
+│   │   ├── test-plb-root/
+│   │   └── plb-root/
+│   ├── policy-initiatives/          # Policy initiatives
+│   │   ├── dev-plb-root/
+│   │   ├── test-plb-root/
+│   │   └── plb-root/
+│   └── policy-assignments/          # Policy assignments
+│       ├── dev-plb-root/
+│       ├── test-plb-root/
+│       └── plb-root/
 ├── pipeline/
-│   ├── deploy-policies.yaml
+│   ├── deploy-policy-definitions.yaml
+│   ├── deploy-policy-initiatives.yaml
+│   ├── deploy-policy-assignments.yaml
 │   └── templates/
 │       └── deploy-terraform.yaml
 ├── .gitignore
@@ -73,7 +84,10 @@ npm install
 
 1. **Create Policy Configuration Files**
 
-   Create JSON files in the appropriate directory structure (e.g., `policies/dev-plb-root/platform/`), named as `<policy-name>.json`:
+   Create JSON files in the appropriate directory structure:
+   - **Policy Definitions**: `policies/policy-definitions/<env>/platform/<name>.json`
+   - **Policy Initiatives**: `policies/policy-initiatives/<env>/platform/<name>.json`
+   - **Policy Assignments**: `policies/policy-assignments/<env>/platform/<name>.json`
 
    ```json
    {
@@ -105,7 +119,7 @@ npm install
 
 2. **Update Terraform Backend**
 
-   Edit `policies/<environment>/provider.tf` to configure your Terraform state backend:
+   Edit `policies/<resource-type>/<environment>/provider.tf` to configure your Terraform state backend:
 
    ```hcl
    terraform {
@@ -153,17 +167,26 @@ Prod: Plan_Policy_Prod → Approval_Prod → Apply_Policy_Prod (when configured)
      - `Test` (optional approval)
      - `Prod` (add approval checks)
 
-4. **Create Pipeline** in Azure DevOps:
-   - Pipelines → New Pipeline → Azure Repos Git
-   - Select repository → Existing Azure Pipelines YAML file
-   - Path: `/pipeline/deploy-policies.yaml`
+4. **Create Pipelines** in Azure DevOps:
+   - **Policy Definitions**: Path `/pipeline/deploy-policy-definitions.yaml`
+   - **Policy Initiatives**: Path `/pipeline/deploy-policy-initiatives.yaml`
+   - **Policy Assignments**: Path `/pipeline/deploy-policy-assignments.yaml`
+   
+   **Note:** Deploy in order: Definitions → Initiatives → Assignments
 
 5. **Run Pipeline**: Push to `main` branch or manually trigger
 
 ### Manual Deployment (Local)
 
 ```bash
-cd policies/dev-plb-root
+# For policy definitions
+cd policies/policy-definitions/dev-plb-root
+
+# For policy initiatives
+cd policies/policy-initiatives/dev-plb-root
+
+# For policy assignments
+cd policies/policy-assignments/dev-plb-root
 
 # Initialize Terraform
 terraform init
@@ -295,7 +318,12 @@ Each policy JSON file (e.g., `policy-vending.json`) contains policy configuratio
 }
 ```
 
-The `main.tf` in each environment folder automatically reads all JSON files recursively from subdirectories and creates policies for each configuration.
+The `main.tf` in each resource type folder automatically reads all JSON files recursively from subdirectories and creates the respective policy resources (definitions, initiatives, or assignments) for each configuration.
+
+**Deployment Order:**
+1. Deploy **Policy Definitions** first
+2. Deploy **Policy Initiatives** (depends on definitions)
+3. Deploy **Policy Assignments** (depends on definitions and initiatives)
 
 ## Development Workflow
 

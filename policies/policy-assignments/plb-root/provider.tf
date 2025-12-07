@@ -3,7 +3,7 @@ terraform {
     resource_group_name  = "rg-tf-state-eus-prod-001"
     storage_account_name = "sttfstateeusprod001"
     container_name       = "tfstate"
-    key                  = "policies-prod.tfstate"
+    key                  = "policy-assignments-prod.tfstate"
   }
 
   required_providers {

@@ -1,0 +1,81 @@
+trigger:
+  branches:
+    include:
+      - main
+  batch: true
+  paths:
+    include:
+      - policies/policy-definitions/**
+      - modules/services/policies/**
+      - modules/resources/policy-definition/**
+      - pipeline/deploy-policy-definitions.yaml
+      - pipeline/templates/deploy-terraform.yaml
+
+pool: default
+
+variables:
+  serviceConnectionDev: 'id-policy-vending-eus-dev-001'
+  serviceConnectionTest: 'id-policy-vending-eus-test-001'
+  serviceConnectionProd: 'id-policy-vending-eus-prod-001'
+  subscriptionIdDev: '243c3cf8-1a50-4b3c-a45e-0d1f0a82a37b'
+  subscriptionIdTest: 'b7762cc9-e968-4152-9cb5-f283738190f4'
+  subscriptionIdProd: 'ef4541ca-58de-411a-bed5-3127d75ee4a2'
+  # Backend configuration for Terraform state
+  backendResourceGroupNameDev: 'rg-tf-state-eus-dev-001'
+  backendStorageAccountNameDev: 'sttfstateeusdev001'
+  backendContainerNameDev: 'tfstate'
+  backendKeyDev: 'policy-definitions-dev.tfstate'
+  backendResourceGroupNameTest: 'rg-tf-state-eus-test-001'
+  backendStorageAccountNameTest: 'sttfstateeustest001'
+  backendContainerNameTest: 'tfstate'
+  backendKeyTest: 'policy-definitions-test.tfstate'
+  backendResourceGroupNameProd: 'rg-tf-state-eus-prod-001'
+  backendStorageAccountNameProd: 'sttfstateeusprod001'
+  backendContainerNameProd: 'tfstate'
+  backendKeyProd: 'policy-definitions-prod.tfstate'
+
+stages:
+  # Dev Environment - Plan and Apply
+  - template: templates/deploy-terraform.yaml
+    parameters:
+      serviceConnection: $(serviceConnectionDev)
+      subscriptionId: $(subscriptionIdDev)
+      environment: 'Dev'
+      workingDirectory: 'policies/policy-definitions/dev-plb-root'
+      resourceType: 'PolicyDef'
+      resourceDisplayName: 'Policy Definitions'
+      runPlanInApply: false
+      backendResourceGroupName: $(backendResourceGroupNameDev)
+      backendStorageAccountName: $(backendStorageAccountNameDev)
+      backendContainerName: $(backendContainerNameDev)
+      backendKey: $(backendKeyDev)
+
+  # Test Environment - Plan and Apply
+  - template: templates/deploy-terraform.yaml
+    parameters:
+      serviceConnection: $(serviceConnectionTest)
+      subscriptionId: $(subscriptionIdTest)
+      environment: 'Test'
+      workingDirectory: 'policies/policy-definitions/test-plb-root'
+      resourceType: 'PolicyDef'
+      resourceDisplayName: 'Policy Definitions'
+      runPlanInApply: false
+      backendResourceGroupName: $(backendResourceGroupNameTest)
+      backendStorageAccountName: $(backendStorageAccountNameTest)
+      backendContainerName: $(backendContainerNameTest)
+      backendKey: $(backendKeyTest)
+
+  # Prod Environment - Plan and Apply
+  - template: templates/deploy-terraform.yaml
+    parameters:
+      serviceConnection: $(serviceConnectionProd)
+      subscriptionId: $(subscriptionIdProd)
+      environment: 'Prod'
+      workingDirectory: 'policies/policy-definitions/plb-root'
+      resourceType: 'PolicyDef'
+      resourceDisplayName: 'Policy Definitions'
+      runPlanInApply: false
+      backendResourceGroupName: $(backendResourceGroupNameProd)
+      backendStorageAccountName: $(backendStorageAccountNameProd)
+      backendContainerName: $(backendContainerNameProd)
+      backendKey: $(backendKeyProd)

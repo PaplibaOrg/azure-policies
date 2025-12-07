@@ -5,9 +5,11 @@ trigger:
   batch: true
   paths:
     include:
-      - policies/**
-      - modules/**
-      - pipeline/**
+      - policies/policy-initiatives/**
+      - modules/services/policies/**
+      - modules/resources/policy-initiative/**
+      - pipeline/deploy-policy-initiatives.yaml
+      - pipeline/templates/deploy-terraform.yaml
 
 pool: default
 
@@ -22,15 +24,15 @@ variables:
   backendResourceGroupNameDev: 'rg-tf-state-eus-dev-001'
   backendStorageAccountNameDev: 'sttfstateeusdev001'
   backendContainerNameDev: 'tfstate'
-  backendKeyDev: 'policies-dev.tfstate'
+  backendKeyDev: 'policy-initiatives-dev.tfstate'
   backendResourceGroupNameTest: 'rg-tf-state-eus-test-001'
   backendStorageAccountNameTest: 'sttfstateeustest001'
   backendContainerNameTest: 'tfstate'
-  backendKeyTest: 'policies-test.tfstate'
+  backendKeyTest: 'policy-initiatives-test.tfstate'
   backendResourceGroupNameProd: 'rg-tf-state-eus-prod-001'
   backendStorageAccountNameProd: 'sttfstateeusprod001'
   backendContainerNameProd: 'tfstate'
-  backendKeyProd: 'policies-prod.tfstate'
+  backendKeyProd: 'policy-initiatives-prod.tfstate'
 
 stages:
   # Dev Environment - Plan and Apply
@@ -38,9 +40,11 @@ stages:
     parameters:
       serviceConnection: $(serviceConnectionDev)
       subscriptionId: $(subscriptionIdDev)
-      environment: 'dev'
-      workingDirectory: 'policies/dev-plb-root'
-      runPlanInApply: false
+      environment: 'Dev'
+      workingDirectory: 'policies/policy-initiatives/dev-plb-root'
+      resourceType: 'PolicyInit'
+      resourceDisplayName: 'Policy Initiatives'
+      runPlanInApply: true
       backendResourceGroupName: $(backendResourceGroupNameDev)
       backendStorageAccountName: $(backendStorageAccountNameDev)
       backendContainerName: $(backendContainerNameDev)
@@ -51,9 +55,11 @@ stages:
     parameters:
       serviceConnection: $(serviceConnectionTest)
       subscriptionId: $(subscriptionIdTest)
-      environment: 'test'
-      workingDirectory: 'policies/test-plb-root'
-      runPlanInApply: false
+      environment: 'Test'
+      workingDirectory: 'policies/policy-initiatives/test-plb-root'
+      resourceType: 'PolicyInit'
+      resourceDisplayName: 'Policy Initiatives'
+      runPlanInApply: true
       backendResourceGroupName: $(backendResourceGroupNameTest)
       backendStorageAccountName: $(backendStorageAccountNameTest)
       backendContainerName: $(backendContainerNameTest)
@@ -64,9 +70,11 @@ stages:
     parameters:
       serviceConnection: $(serviceConnectionProd)
       subscriptionId: $(subscriptionIdProd)
-      environment: 'prod'
-      workingDirectory: 'policies/plb-root'
-      runPlanInApply: false
+      environment: 'Prod'
+      workingDirectory: 'policies/policy-initiatives/plb-root'
+      resourceType: 'PolicyInit'
+      resourceDisplayName: 'Policy Initiatives'
+      runPlanInApply: true
       backendResourceGroupName: $(backendResourceGroupNameProd)
       backendStorageAccountName: $(backendStorageAccountNameProd)
       backendContainerName: $(backendContainerNameProd)
