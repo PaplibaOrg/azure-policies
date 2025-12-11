@@ -65,9 +65,7 @@ module "policy_assignments" {
         value,
         {
           # Replace hardcoded management group references with dynamic values
-          # Extract the management group name from the variable (e.g., "dev-plb-root" from variable)
           # Replace in full Azure resource IDs (e.g., "/providers/Microsoft.Management/managementGroups/dev-plb-root")
-          mg_name = var.management_group_id
           scope = replace(
             replace(
               replace(
