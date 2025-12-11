@@ -40,7 +40,7 @@ stages:
       serviceConnection: $(serviceConnectionDev)
       subscriptionId: $(subscriptionIdDev)
       environment: 'Dev'
-      workingDirectory: 'policies/assignments/root'
+      workingDirectory: 'policies/assignments/dev-plb-root'
       resourceType: 'PolicyAssign'
       resourceDisplayName: 'Policy Assignments'
       runPlanInApply: true
