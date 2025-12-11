@@ -19,8 +19,8 @@ provider "azurerm" {
 }
 
 locals {
-  # Recursively find all JSON files - each file is a policy definition
-  json_files = fileset("${path.module}", "*.json")
+  # Find all JSON files from the shared folder - each file is a policy definition
+  json_files = fileset("${path.module}/../shared", "*.json")
 
   # Management group ID is the folder name - extract from current working directory
   # In pipeline, we cd into this directory, so path.cwd will have the full path
@@ -31,7 +31,7 @@ locals {
   # Parse each JSON file as a policy definition
   raw_policy_definitions = {
     for file in local.json_files :
-    replace(basename(file), ".json", "") => jsondecode(file("${path.module}/${file}"))
+    replace(basename(file), ".json", "") => jsondecode(file("${path.module}/../shared/${file}"))
   }
 
   # Parse policy definitions - support multiple formats:
