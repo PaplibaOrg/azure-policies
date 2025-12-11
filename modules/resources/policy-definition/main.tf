@@ -1,4 +1,4 @@
-resource "azurerm_policy_definition" "this" {
+resource "azurerm_policy_definition" "policy_definition" {
   name                = var.name
   policy_type         = var.policy_type
   mode                = var.mode

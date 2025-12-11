@@ -78,7 +78,7 @@ stages:
                   -backend-config="key=${{ parameters.backendKey }}"
                 
                 # Unlock state if locked (replace with actual lock ID from error if different)
-                # terraform force-unlock -force 36d425be-2152-8f7a-6e74-76d30667534b || echo "Lock already released or unlock failed, continuing..."
+                # terraform force-unlock -force 21dfb29f-ece3-cf46-0a8a-f28bd7aeef38 || echo "Lock already released or unlock failed, continuing..."
                 
                 terraform plan -var="management_group_id=${{ parameters.managementGroupId }}"
 

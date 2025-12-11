@@ -1,10 +1,10 @@
 output "policy_set_definition_id" {
   description = "The ID of the policy set definition"
-  value       = azurerm_policy_set_definition.this.id
+  value       = azurerm_policy_set_definition.policy_set_definition.id
 }
 
 output "policy_set_definition_name" {
   description = "The name of the policy set definition"
-  value       = azurerm_policy_set_definition.this.name
+  value       = azurerm_policy_set_definition.policy_set_definition.name
 }
 

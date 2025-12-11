@@ -1,4 +1,4 @@
-resource "azurerm_policy_assignment" "this" {
+resource "azurerm_policy_assignment" "policy_assignment" {
   name                 = var.name
   display_name         = var.display_name
   description          = var.description
