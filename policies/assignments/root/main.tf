@@ -65,30 +65,31 @@ module "policy_assignments" {
         value,
         {
           # Replace hardcoded management group references with dynamic values
-          # Replace dev-plb-root, test-plb-root, plb-root with the actual management_group_id
-          # Replace dev-plb-platform, test-plb-platform, plb-platform with platform variant
+          # Extract the management group name from the variable (e.g., "dev-plb-root" from variable)
+          # Replace in full Azure resource IDs (e.g., "/providers/Microsoft.Management/managementGroups/dev-plb-root")
+          mg_name = var.management_group_id
           scope = replace(
             replace(
               replace(
                 replace(
                   replace(
-                    replace(value.scope, "dev-plb-root", var.management_group_id),
-                    "test-plb-root", var.management_group_id
+                    replace(value.scope, "/managementGroups/dev-plb-root", "/managementGroups/${var.management_group_id}"),
+                    "/managementGroups/test-plb-root", "/managementGroups/${var.management_group_id}"
                   ),
-                  "plb-root", var.management_group_id
+                  "/managementGroups/plb-root", "/managementGroups/${var.management_group_id}"
                 ),
-                "dev-plb-platform", replace(var.management_group_id, "-root", "-platform")
+                "/managementGroups/dev-plb-platform", "/managementGroups/${replace(var.management_group_id, "-root", "-platform")}"
               ),
-              "test-plb-platform", replace(var.management_group_id, "-root", "-platform")
+              "/managementGroups/test-plb-platform", "/managementGroups/${replace(var.management_group_id, "-root", "-platform")}"
             ),
-            "plb-platform", replace(var.management_group_id, "-root", "-platform")
+            "/managementGroups/plb-platform", "/managementGroups/${replace(var.management_group_id, "-root", "-platform")}"
           )
           policy_definition_id = replace(
             replace(
-              replace(value.policy_definition_id, "dev-plb-root", var.management_group_id),
-              "test-plb-root", var.management_group_id
+              replace(value.policy_definition_id, "/managementGroups/dev-plb-root", "/managementGroups/${var.management_group_id}"),
+              "/managementGroups/test-plb-root", "/managementGroups/${var.management_group_id}"
             ),
-            "plb-root", var.management_group_id
+            "/managementGroups/plb-root", "/managementGroups/${var.management_group_id}"
           )
         }
       )
