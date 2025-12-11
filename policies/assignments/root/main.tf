@@ -26,21 +26,38 @@ locals {
   management_group_id = "/providers/Microsoft.Management/managementGroups/${var.management_group_id}"
   platform_mg_id      = "/providers/Microsoft.Management/managementGroups/${replace(var.management_group_id, "-root", "-platform")}"
 
-  # Recursively find all JSON files at any depth using ** pattern
+  # Recursively find all JSON template files at any depth using ** pattern
+  json_template_files = fileset("${path.module}", "**/*.json.tpl")
+
+  # Process template files with variables using templatefile()
+  processed_json_files = {
+    for file in local.json_template_files :
+    replace(file, ".tpl", "") => jsondecode(templatefile("${path.module}/${file}", {
+      management_group_id = var.management_group_id
+      full_mg_id          = local.management_group_id
+      platform_mg_id      = local.platform_mg_id
+    }))
+  }
+
+  # Also find regular JSON files (non-template) for backward compatibility
   json_files = fileset("${path.module}", "**/*.json")
 
   # Decode JSON once per file and filter out files that have policy_assignments
-  raw_json_files = {
-    for file in local.json_files :
-    file => jsondecode(file("${path.module}/${file}"))
-    if can(jsondecode(file("${path.module}/${file}")).environment) &&
-    can(jsondecode(file("${path.module}/${file}")).policy_assignments)
-  }
+  raw_json_files = merge(
+    local.processed_json_files,
+    {
+      for file in local.json_files :
+      file => jsondecode(file("${path.module}/${file}"))
+      if !endswith(file, ".tpl") && can(jsondecode(file("${path.module}/${file}")).environment) &&
+      can(jsondecode(file("${path.module}/${file}")).policy_assignments)
+    }
+  )
 
   # Final map used for for_each - use a unique key based on file path
   json_object_map = {
     for key, json_data in local.raw_json_files :
     replace(key, ".json", "") => json_data
+    if can(json_data.environment) && can(json_data.policy_assignments)
   }
 
   # Convert tags object to map(string) for Azure
@@ -62,36 +79,7 @@ module "policy_assignments" {
     for file_key, file_data in local.json_object_map :
     {
       for key, value in lookup(file_data, "policy_assignments", {}) :
-      "${file_key}-${key}" => merge(
-        value,
-        {
-          # Replace hardcoded management group references with dynamic values
-          # Replace in full Azure resource IDs
-          scope = replace(
-            replace(
-              replace(
-                replace(
-                  replace(
-                    replace(value.scope, "/managementGroups/dev-plb-root", "/managementGroups/${var.management_group_id}"),
-                    "/managementGroups/test-plb-root", "/managementGroups/${var.management_group_id}"
-                  ),
-                  "/managementGroups/plb-root", "/managementGroups/${var.management_group_id}"
-                ),
-                "/managementGroups/dev-plb-platform", local.platform_mg_id
-              ),
-              "/managementGroups/test-plb-platform", local.platform_mg_id
-            ),
-            "/managementGroups/plb-platform", local.platform_mg_id
-          )
-          policy_definition_id = replace(
-            replace(
-              replace(value.policy_definition_id, "/managementGroups/dev-plb-root", local.management_group_id),
-              "/managementGroups/test-plb-root", local.management_group_id
-            ),
-            "/managementGroups/plb-root", local.management_group_id
-          )
-        }
-      )
+      "${file_key}-${key}" => value
     }
   ]...)
 
