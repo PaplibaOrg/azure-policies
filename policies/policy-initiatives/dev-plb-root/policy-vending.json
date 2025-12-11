@@ -12,7 +12,7 @@
       "description": "Initiative to enforce naming conventions for Azure resources",
       "policy_definition_reference": [
         {
-          "policy_definition_name": "policy-vending"
+          "policy_definition_name": "subscription-naming"
         }
       ]
     }
