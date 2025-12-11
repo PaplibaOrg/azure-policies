@@ -40,7 +40,7 @@ stages:
       serviceConnection: $(serviceConnectionDev)
       subscriptionId: $(subscriptionIdDev)
       environment: 'Dev'
-      workingDirectory: 'policies/initiatives/dev-plb-root'
+      workingDirectory: 'policies/initiatives/root'
       resourceType: 'PolicyInit'
       resourceDisplayName: 'Policy Initiatives'
       runPlanInApply: true
@@ -55,7 +55,7 @@ stages:
       serviceConnection: $(serviceConnectionTest)
       subscriptionId: $(subscriptionIdTest)
       environment: 'Test'
-      workingDirectory: 'policies/initiatives/test-plb-root'
+      workingDirectory: 'policies/initiatives/root'
       resourceType: 'PolicyInit'
       resourceDisplayName: 'Policy Initiatives'
       runPlanInApply: true
@@ -70,7 +70,7 @@ stages:
       serviceConnection: $(serviceConnectionProd)
       subscriptionId: $(subscriptionIdProd)
       environment: 'Prod'
-      workingDirectory: 'policies/initiatives/plb-root'
+      workingDirectory: 'policies/initiatives/root'
       resourceType: 'PolicyInit'
       resourceDisplayName: 'Policy Initiatives'
       runPlanInApply: true
