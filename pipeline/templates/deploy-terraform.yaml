@@ -28,10 +28,6 @@ parameters:
     type: string
   - name: backendKey
     type: string
-  - name: managementGroupId
-    type: string
-    # Management group ID for the deployment (e.g., dev-plb-root, test-plb-root, plb-root)
-
 stages:
   # Plan Stage
   - stage: Plan_${{ parameters.resourceType }}_${{ parameters.environment }}
@@ -51,6 +47,23 @@ stages:
                 az account set --subscription "${{ parameters.subscriptionId }}"
                 
                 cd ${{ parameters.workingDirectory }}
+                
+                # Extract folder name from working directory (e.g., "policies/definitions/root" -> "root")
+                FOLDER_NAME=$(basename "${{ parameters.workingDirectory }}")
+                
+                # Construct management group ID based on environment and folder name
+                # Dev: dev-plb-{folder}, Test: test-plb-{folder}, Prod: plb-{folder}
+                if [ "${{ parameters.environment }}" = "Dev" ]; then
+                  MG_ID="dev-plb-${FOLDER_NAME}"
+                elif [ "${{ parameters.environment }}" = "Test" ]; then
+                  MG_ID="test-plb-${FOLDER_NAME}"
+                else
+                  MG_ID="plb-${FOLDER_NAME}"
+                fi
+                
+                echo "Folder name: ${FOLDER_NAME}"
+                echo "Environment: ${{ parameters.environment }}"
+                echo "Management Group ID: ${MG_ID}"
                 
                 # Get Azure context and set ARM variables for Azure provider authentication
                 SUBSCRIPTION_ID=$(az account show --query id -o tsv)
@@ -80,7 +93,7 @@ stages:
                 # Unlock state if locked (replace with actual lock ID from error if different)
                 # terraform force-unlock -force <LOCK_ID> || echo "Lock already released or unlock failed, continuing..."
                 
-                terraform plan -var="management_group_id=${{ parameters.managementGroupId }}"
+                terraform plan -var="management_group_id=${MG_ID}"
 
   # Apply Stage
   - stage: Apply_${{ parameters.resourceType }}_${{ parameters.environment }}
@@ -105,6 +118,23 @@ stages:
                       az account set --subscription "${{ parameters.subscriptionId }}"
                       
                       cd ${{ parameters.workingDirectory }}
+                      
+                      # Extract folder name from working directory (e.g., "policies/definitions/root" -> "root")
+                      FOLDER_NAME=$(basename "${{ parameters.workingDirectory }}")
+                      
+                      # Construct management group ID based on environment and folder name
+                      # Dev: dev-plb-{folder}, Test: test-plb-{folder}, Prod: plb-{folder}
+                      if [ "${{ parameters.environment }}" = "Dev" ]; then
+                        MG_ID="dev-plb-${FOLDER_NAME}"
+                      elif [ "${{ parameters.environment }}" = "Test" ]; then
+                        MG_ID="test-plb-${FOLDER_NAME}"
+                      else
+                        MG_ID="plb-${FOLDER_NAME}"
+                      fi
+                      
+                      echo "Folder name: ${FOLDER_NAME}"
+                      echo "Environment: ${{ parameters.environment }}"
+                      echo "Management Group ID: ${MG_ID}"
                        
                       # Get Azure context and set ARM variables for Azure provider authentication
                       SUBSCRIPTION_ID=$(az account show --query id -o tsv)
@@ -132,7 +162,7 @@ stages:
                         -backend-config="key=${{ parameters.backendKey }}"
                       
                       if [ "${{ parameters.runPlanInApply }}" = "true" ]; then
-                        terraform plan -var="management_group_id=${{ parameters.managementGroupId }}"
+                        terraform plan -var="management_group_id=${MG_ID}"
                       fi
                       
-                      terraform apply -auto-approve -var="management_group_id=${{ parameters.managementGroupId }}"
+                      terraform apply -auto-approve -var="management_group_id=${MG_ID}"
