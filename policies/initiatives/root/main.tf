@@ -32,8 +32,7 @@ locals {
   raw_json_files = {
     for file in local.json_files :
     file => jsondecode(file("${path.module}/${file}"))
-    if can(jsondecode(file("${path.module}/${file}")).environment) &&
-    can(jsondecode(file("${path.module}/${file}")).policy_initiatives)
+    if can(jsondecode(file("${path.module}/${file}")).policy_initiatives)
   }
 
   # Final map used for for_each - use a unique key based on file path

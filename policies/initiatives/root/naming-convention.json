@@ -1,5 +1,4 @@
 {
-  "environment": "dev",
   "version": "1.0.0",
   "policy_initiatives": {
     "naming-convention": {
