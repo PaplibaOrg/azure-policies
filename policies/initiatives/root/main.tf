@@ -62,7 +62,7 @@ module "policy_initiatives" {
               policy_definition_id = can(ref.policy_definition_name) ? (
                 "${local.management_group_id}/providers/Microsoft.Authorization/policyDefinitions/${ref.policy_definition_name}"
               ) : ref.policy_definition_id
-              parameter_values   = try(ref.parameter_values, null)
+              parameter_values   = can(ref.parameter_values) ? jsonencode(ref.parameter_values) : null
               reference_id       = try(ref.reference_id, null)
               policy_group_names = try(ref.policy_group_names, null)
             }
@@ -78,6 +78,6 @@ module "policy_initiatives" {
   description         = lookup(each.value, "description", "")
   management_group_id = try(each.value.management_group_id, local.management_group_id)
   metadata            = lookup(each.value, "metadata", "{}")
-  parameters          = lookup(each.value, "parameters", "{}")
+  parameters          = can(each.value.parameters) ? jsonencode(each.value.parameters) : lookup(each.value, "parameters", "{}")
   policy_definition_reference = each.value.policy_definition_reference
 }

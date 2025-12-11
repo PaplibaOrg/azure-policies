@@ -10,15 +10,39 @@
       "name": "naming-convention",
       "display_name": "Naming Convention Initiative",
       "description": "Initiative to enforce naming conventions for Azure resources",
+      "parameters": {
+        "companyPrefix": {
+          "type": "String",
+          "metadata": {
+            "displayName": "Company Prefix",
+            "description": "The company prefix for resource naming. This parameter is required and will be passed to all referenced policy definitions."
+          }
+        }
+      },
       "policy_definition_reference": [
         {
-          "policy_definition_name": "subscription-naming"
+          "policy_definition_name": "subscription-naming",
+          "parameter_values": {
+            "companyPrefix": {
+              "value": "[parameters('companyPrefix')]"
+            }
+          }
         },
         {
-          "policy_definition_name": "resource-group-naming"
+          "policy_definition_name": "resource-group-naming",
+          "parameter_values": {
+            "companyPrefix": {
+              "value": "[parameters('companyPrefix')]"
+            }
+          }
         },
         {
-          "policy_definition_name": "resources-naming"
+          "policy_definition_name": "resources-naming",
+          "parameter_values": {
+            "companyPrefix": {
+              "value": "[parameters('companyPrefix')]"
+            }
+          }
         }
       ]
     }
