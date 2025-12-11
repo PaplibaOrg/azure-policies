@@ -1,9 +1,7 @@
 terraform {
   backend "azurerm" {
-    resource_group_name  = "rg-tf-state-eus-prod-001"
-    storage_account_name = "sttfstateeusprod001"
-    container_name       = "tfstate"
-    key                  = "policy-initiatives-prod.tfstate"
+    # Backend configuration will be provided via backend config file or command line
+    # Example: terraform init -backend-config="resource_group_name=rg-tf-state-eus-dev-001" ...
   }
 
   required_providers {
@@ -18,15 +16,17 @@ provider "azurerm" {
   features {}
 }
 
+variable "management_group_id" {
+  description = "The management group ID where policy initiatives will be deployed (e.g., dev-plb-root, test-plb-root, plb-root)"
+  type        = string
+}
+
 locals {
   # Recursively find all JSON files at any depth using ** pattern
   json_files = fileset("${path.module}", "**/*.json")
 
-  # Management group ID is the folder name - extract from current working directory
-  # In pipeline, we cd into this directory, so path.cwd will have the full path
-  # Format: /providers/Microsoft.Management/managementGroups/{name}
-  mg_name = reverse(split("/", path.cwd))[0]
-  management_group_id = "/providers/Microsoft.Management/managementGroups/${local.mg_name}"
+  # Construct full management group ID
+  management_group_id = "/providers/Microsoft.Management/managementGroups/${var.management_group_id}"
 
   # Decode JSON once per file and filter out files that have policy_initiatives
   raw_json_files = {

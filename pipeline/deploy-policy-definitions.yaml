@@ -40,7 +40,7 @@ stages:
       serviceConnection: $(serviceConnectionDev)
       subscriptionId: $(subscriptionIdDev)
       environment: 'Dev'
-      workingDirectory: 'policies/definitions/dev-plb-root'
+      workingDirectory: 'policies/definitions/root'
       resourceType: 'PolicyDef'
       resourceDisplayName: 'Policy Definitions'
       runPlanInApply: false
