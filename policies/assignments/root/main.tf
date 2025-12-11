@@ -79,36 +79,7 @@ module "policy_assignments" {
     for file_key, file_data in local.json_object_map :
     {
       for key, value in lookup(file_data, "policy_assignments", {}) :
-      "${file_key}-${key}" => merge(
-        value,
-        {
-          # Replace hardcoded management group references with dynamic values
-          # Replace in full Azure resource IDs (e.g., "/providers/Microsoft.Management/managementGroups/dev-plb-root")
-          scope = replace(
-            replace(
-              replace(
-                replace(
-                  replace(
-                    replace(value.scope, "/managementGroups/dev-plb-root", "/managementGroups/${var.management_group_id}"),
-                    "/managementGroups/test-plb-root", "/managementGroups/${var.management_group_id}"
-                  ),
-                  "/managementGroups/plb-root", "/managementGroups/${var.management_group_id}"
-                ),
-                "/managementGroups/dev-plb-platform", "/managementGroups/${replace(var.management_group_id, "-root", "-platform")}"
-              ),
-              "/managementGroups/test-plb-platform", "/managementGroups/${replace(var.management_group_id, "-root", "-platform")}"
-            ),
-            "/managementGroups/plb-platform", "/managementGroups/${replace(var.management_group_id, "-root", "-platform")}"
-          )
-          policy_definition_id = replace(
-            replace(
-              replace(value.policy_definition_id, "/managementGroups/dev-plb-root", "/managementGroups/${var.management_group_id}"),
-              "/managementGroups/test-plb-root", "/managementGroups/${var.management_group_id}"
-            ),
-            "/managementGroups/plb-root", "/managementGroups/${var.management_group_id}"
-          )
-        }
-      )
+      "${file_key}-${key}" => value
     }
   ]...)
 
