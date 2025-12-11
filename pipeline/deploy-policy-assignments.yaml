@@ -5,7 +5,7 @@ trigger:
   batch: true
   paths:
     include:
-      - policies/policy-assignments/**
+      - policies/assignments/**
       - modules/resources/policy-assignment/**
       - pipeline/deploy-policy-assignments.yaml
       - pipeline/templates/deploy-terraform.yaml
@@ -40,7 +40,7 @@ stages:
       serviceConnection: $(serviceConnectionDev)
       subscriptionId: $(subscriptionIdDev)
       environment: 'Dev'
-      workingDirectory: 'policies/policy-assignments/dev-plb-root'
+      workingDirectory: 'policies/assignments/dev-plb-root'
       resourceType: 'PolicyAssign'
       resourceDisplayName: 'Policy Assignments'
       runPlanInApply: true
@@ -55,7 +55,7 @@ stages:
       serviceConnection: $(serviceConnectionTest)
       subscriptionId: $(subscriptionIdTest)
       environment: 'Test'
-      workingDirectory: 'policies/policy-assignments/test-plb-root'
+      workingDirectory: 'policies/assignments/test-plb-root'
       resourceType: 'PolicyAssign'
       resourceDisplayName: 'Policy Assignments'
       runPlanInApply: true
@@ -70,7 +70,7 @@ stages:
       serviceConnection: $(serviceConnectionProd)
       subscriptionId: $(subscriptionIdProd)
       environment: 'Prod'
-      workingDirectory: 'policies/policy-assignments/plb-root'
+      workingDirectory: 'policies/assignments/plb-root'
       resourceType: 'PolicyAssign'
       resourceDisplayName: 'Policy Assignments'
       runPlanInApply: true

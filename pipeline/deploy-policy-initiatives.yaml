@@ -5,7 +5,7 @@ trigger:
   batch: true
   paths:
     include:
-      - policies/policy-initiatives/**
+      - policies/initiatives/**
       - modules/resources/policy-initiative/**
       - pipeline/deploy-policy-initiatives.yaml
       - pipeline/templates/deploy-terraform.yaml
@@ -40,7 +40,7 @@ stages:
       serviceConnection: $(serviceConnectionDev)
       subscriptionId: $(subscriptionIdDev)
       environment: 'Dev'
-      workingDirectory: 'policies/policy-initiatives/dev-plb-root'
+      workingDirectory: 'policies/initiatives/dev-plb-root'
       resourceType: 'PolicyInit'
       resourceDisplayName: 'Policy Initiatives'
       runPlanInApply: true
@@ -55,7 +55,7 @@ stages:
       serviceConnection: $(serviceConnectionTest)
       subscriptionId: $(subscriptionIdTest)
       environment: 'Test'
-      workingDirectory: 'policies/policy-initiatives/test-plb-root'
+      workingDirectory: 'policies/initiatives/test-plb-root'
       resourceType: 'PolicyInit'
       resourceDisplayName: 'Policy Initiatives'
       runPlanInApply: true
@@ -70,7 +70,7 @@ stages:
       serviceConnection: $(serviceConnectionProd)
       subscriptionId: $(subscriptionIdProd)
       environment: 'Prod'
-      workingDirectory: 'policies/policy-initiatives/plb-root'
+      workingDirectory: 'policies/initiatives/plb-root'
       resourceType: 'PolicyInit'
       resourceDisplayName: 'Policy Initiatives'
       runPlanInApply: true
