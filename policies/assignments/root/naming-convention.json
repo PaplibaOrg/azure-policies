@@ -13,8 +13,8 @@
     "assign-require-tag-environment": {
       "name": "assign-require-tag-environment",
       "display_name": "Assign Require Environment Tag Policy",
-      "scope": "${platform_mg_id}",
-      "policy_definition_id": "${full_mg_id}/providers/Microsoft.Authorization/policyDefinitions/require-tag-environment"
+      "scope": "/providers/Microsoft.Management/managementGroups/dev-plb-platform",
+      "policy_definition_id": "/providers/Microsoft.Management/managementGroups/dev-plb-root/providers/Microsoft.Authorization/policyDefinitions/require-tag-environment"
     }
   }
 }
