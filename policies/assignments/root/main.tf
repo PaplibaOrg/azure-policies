@@ -25,6 +25,9 @@ locals {
   # Recursively find all JSON files at any depth using ** pattern
   json_files = fileset("${path.module}", "**/*.json")
 
+  # Construct full management group ID
+  management_group_id = "/providers/Microsoft.Management/managementGroups/${var.management_group_id}"
+
   # Decode JSON once per file and filter out files that have policy_assignments
   raw_json_files = {
     for file in local.json_files :
@@ -58,7 +61,37 @@ module "policy_assignments" {
     for file_key, file_data in local.json_object_map :
     {
       for key, value in lookup(file_data, "policy_assignments", {}) :
-      "${file_key}-${key}" => value
+      "${file_key}-${key}" => merge(
+        value,
+        {
+          # Replace hardcoded management group references with dynamic values
+          # Replace dev-plb-root, test-plb-root, plb-root with the actual management_group_id
+          # Replace dev-plb-platform, test-plb-platform, plb-platform with platform variant
+          scope = replace(
+            replace(
+              replace(
+                replace(
+                  replace(
+                    replace(value.scope, "dev-plb-root", var.management_group_id),
+                    "test-plb-root", var.management_group_id
+                  ),
+                  "plb-root", var.management_group_id
+                ),
+                "dev-plb-platform", replace(var.management_group_id, "-root", "-platform")
+              ),
+              "test-plb-platform", replace(var.management_group_id, "-root", "-platform")
+            ),
+            "plb-platform", replace(var.management_group_id, "-root", "-platform")
+          )
+          policy_definition_id = replace(
+            replace(
+              replace(value.policy_definition_id, "dev-plb-root", var.management_group_id),
+              "test-plb-root", var.management_group_id
+            ),
+            "plb-root", var.management_group_id
+          )
+        }
+      )
     }
   ]...)
 
