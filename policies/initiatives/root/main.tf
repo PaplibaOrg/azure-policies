@@ -78,6 +78,6 @@ module "policy_initiatives" {
   description         = lookup(each.value, "description", "")
   management_group_id = try(each.value.management_group_id, local.management_group_id)
   metadata            = lookup(each.value, "metadata", "{}")
-  parameters          = can(each.value.parameters) ? jsonencode(each.value.parameters) : try(jsonencode(lookup(each.value, "parameters", {})), "{}")
+  parameters          = try(jsonencode(each.value.parameters), try(jsonencode(lookup(each.value, "parameters", {})), "{}"))
   policy_definition_reference = each.value.policy_definition_reference
 }
