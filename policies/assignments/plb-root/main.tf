@@ -1,7 +1,9 @@
 terraform {
   backend "azurerm" {
-    # Backend configuration will be provided via backend config file or command line
-    # Example: terraform init -backend-config="resource_group_name=rg-tf-state-eus-dev-001" ...
+    resource_group_name  = "rg-tf-state-eus-prod-001"
+    storage_account_name = "sttfstateeusprod001"
+    container_name       = "tfstate"
+    key                  = "policy-assignments-prod.tfstate"
   }
 
   required_providers {
@@ -14,11 +16,6 @@ terraform {
 
 provider "azurerm" {
   features {}
-}
-
-variable "management_group_id" {
-  description = "The management group ID where policy assignments will be deployed (e.g., dev-plb-root, test-plb-root, plb-root)"
-  type        = string
 }
 
 locals {
@@ -75,4 +72,3 @@ module "policy_assignments" {
   enforcement_mode     = lookup(each.value, "enforcement_mode", "Default")
   tags                 = local.tags_map
 }
-
