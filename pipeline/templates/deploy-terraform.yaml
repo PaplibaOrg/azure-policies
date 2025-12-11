@@ -28,6 +28,9 @@ parameters:
     type: string
   - name: backendKey
     type: string
+  - name: managementGroupId
+    type: string
+    # Management group ID for the deployment (e.g., dev-plb-root, test-plb-root, plb-root)
 
 stages:
   # Plan Stage
@@ -77,7 +80,7 @@ stages:
                 # Unlock state if locked (replace with actual lock ID from error if different)
                 # terraform force-unlock -force <LOCK_ID> || echo "Lock already released or unlock failed, continuing..."
                 
-                terraform plan
+                terraform plan -var="management_group_id=${{ parameters.managementGroupId }}"
 
   # Apply Stage
   - stage: Apply_${{ parameters.resourceType }}_${{ parameters.environment }}
@@ -129,7 +132,7 @@ stages:
                         -backend-config="key=${{ parameters.backendKey }}"
                       
                       if [ "${{ parameters.runPlanInApply }}" = "true" ]; then
-                        terraform plan
+                        terraform plan -var="management_group_id=${{ parameters.managementGroupId }}"
                       fi
                       
-                      terraform apply -auto-approve
+                      terraform apply -auto-approve -var="management_group_id=${{ parameters.managementGroupId }}"
