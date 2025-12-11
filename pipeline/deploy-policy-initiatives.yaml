@@ -48,6 +48,7 @@ stages:
       backendStorageAccountName: $(backendStorageAccountNameDev)
       backendContainerName: $(backendContainerNameDev)
       backendKey: $(backendKeyDev)
+      managementGroupId: 'dev-plb-root'
 
   # Test Environment - Plan and Apply
   - template: templates/deploy-terraform.yaml
@@ -63,6 +64,7 @@ stages:
       backendStorageAccountName: $(backendStorageAccountNameTest)
       backendContainerName: $(backendContainerNameTest)
       backendKey: $(backendKeyTest)
+      managementGroupId: 'test-plb-root'
 
   # Prod Environment - Plan and Apply
   - template: templates/deploy-terraform.yaml
