@@ -1,10 +1,6 @@
 {
   "environment": "dev",
   "version": "1.0.0",
-  "tags": {
-    "owner": "sunny.bharne",
-    "application": "vending"
-  },
   "policy_initiatives": {
     "naming-convention": {
       "name": "naming-convention",
