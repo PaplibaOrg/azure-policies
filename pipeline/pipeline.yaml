@@ -1,0 +1,24 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - path/**
+
+pool: default
+
+stages:
+  - stage: TerraformPlan
+    displayName: 'Terraform Plan Stage'
+    jobs:
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'serviceConnection'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            terraform init
+            terraform plan -out=tfplan -var-file='./my-vars.tfvars' -var="env=dev"
+          workingDirectory: '$(System.DefaultWorkingDirectory)'
+        displayName: 'Terraform Plan'
