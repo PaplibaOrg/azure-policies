@@ -54,8 +54,8 @@ locals {
 }
 
 module "policy_definitions" {
-  source = "../../../modules/resources/policy-definition"
-  for_each = local.parsed_policy_definitions
+  source              = "../../../modules/resources/policy-definition"
+  for_each            = local.parsed_policy_definitions
   name                = each.value.name
   policy_type         = each.value.policy_type
   mode                = each.value.mode
@@ -67,3 +67,55 @@ module "policy_definitions" {
   policy_rule         = each.value.policy_rule
 }
 
+
+# resource "azurerm_policy_definition" "policy" {
+#   name                = var.policy_name
+#   policy_type         = var.policy_type
+#   mode                = var.policy_mode
+#   display_name        = var.policy_display_name
+#   description         = var.policy_description
+#   management_group_id = var.management_group_id
+#   metadata            = var.policy_metadata
+#   policy_rule         = var.policy_rule
+#   parameters          = var.policy_parameters
+# }
+
+# resource "random_string" "example" {
+#   length  = 16
+#   special = false
+# }
+
+# variable "env" {
+#   description = "Environment"
+#   type        = string
+#
+#   validation {
+#     condition     = contains(["dev", "test", "prod"], var.variableName)
+#     error_message = "env should be dev, test or prod."
+#   }
+# }
+
+# locals {
+#   json_object = jsondecode(file("${path.module}/policy.json"))
+#   environment = var.env == "prod" ? "" : var.env == "test" ? "test-" : "dev-"
+# }
+#
+# resource "azurerm_policy_definition" "policy" {
+#   name                = local.json_object.name
+#   policy_type         = local.json_object.policy_type
+#   mode                = local.json_object.mode
+#   display_name        = local.json_object.displayName
+#   description         = local.json_object.description
+#   management_group_id = "/providers/Microsoft.Management/managementGroups/${environment}plb-root"
+#   metadata            = jsonencode(local.json_object.metadata)
+#   policy_rule         = jsonencode(local.json_object.policyRule)
+#   parameters          = jsonencode(local.json_object.parameter)
+# }
+#
+# output "policy_definition_id" {
+#   value = azurerm_policy_definition.policy.id
+# }
+#
+# output "policy_definition_name" {
+#   value = azurerm_policy_definition.policy.role_definition_ids
+# }
