@@ -1,24 +1,75 @@
-trigger:
-  branches:
-    include:
-      - main
-  paths:
-    include:
-      - path/**
+variables:
+  serviceConnectionDev: 'id-policy-vending-eus-dev-001'
+  serviceConnectionTest: 'id-policy-vending-eus-test-001'
+  serviceConnectionProd: 'id-policy-vending-eus-prod-001'
 
-pool: default
+pool: 'default'
 
 stages:
-  - stage: TerraformPlan
-    displayName: 'Terraform Plan Stage'
-    jobs:
-      - task: AzureCLI@2
-        inputs:
-          azureSubscription: 'serviceConnection'
-          scriptType: 'bash'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            terraform init
-            terraform plan -out=tfplan -var-file='./my-vars.tfvars' -var="env=dev"
-          workingDirectory: '$(System.DefaultWorkingDirectory)'
-        displayName: 'Terraform Plan'
+- stage: Dev
+  displayName: Dev
+  jobs:
+  - job: DevJob
+    displayName: DevJob
+
+    steps: 
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: $(serviceConnectionDev)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+              echo "Dev Deployment"
+              cd policies/definitions
+              terraform plan
+              echo "##vso[task.setvariable variable=varname;isoutput=true]varvalue"
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+        failOnStandardError: false
+      displayName: 'Dev Deployment'
+      env:
+        KEY: $(VALUE)
+
+# - stage: Test
+#   displayName: Test
+#   jobs:
+#   - job: TestJob
+#     displayName: TestJob
+#
+#     steps: 
+#     - task: AzureCLI@2
+#       inputs:
+#         azureSubscription: $(serviceConnectionTest)
+#         scriptType: 'bash'
+#         scriptLocation: 'inlineScript'
+#         inlineScript: |
+#               echo "Test Deployment"
+#               ls
+#               echo "##vso[task.setvariable variable=varname;isoutput=true]varvalue"
+#         workingDirectory: '$(System.DefaultWorkingDirectory)'
+#         failOnStandardError: false
+#       displayName: 'Test Deployment'
+#       env:
+#         KEY: $(VALUE)
+#
+# - stage: Prod
+#   displayName: Prod
+#   jobs:
+#   - job: ProdJob
+#     displayName: ProdJob
+#
+#     steps: 
+#
+#     - task: AzureCLI@2
+#       inputs:
+#         azureSubscription: $(serviceConnectionProd)
+#         scriptType: 'bash'
+#         scriptLocation: 'inlineScript'
+#         inlineScript: |
+#               echo "Prod Deployment"
+#               ls
+#               echo "##vso[task.setvariable variable=varname;isoutput=true]varvalue"
+#         workingDirectory: '$(System.DefaultWorkingDirectory)'
+#         failOnStandardError: false
+#       displayName: 'Prod Deployment'
+#       env:
+#         KEY: $(VALUE)
