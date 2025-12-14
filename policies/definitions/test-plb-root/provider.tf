@@ -15,10 +15,10 @@ terraform {
   }
 
   backend "azurerm" {
-    resource_group_name  = "rg-tf-state-eus-dev-001"
-    storage_account_name = "sttfstateeusdev001"
+    resource_group_name  = "rg-tf-state-eus-test-001"
+    storage_account_name = "sttfstateeustest001"
     container_name       = "tfstate"
-    key                  = "policy.definitions.dev.tfstate"
+    key                  = "policy.definitions.test.tfstate"
   }
 }
 

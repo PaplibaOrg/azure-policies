@@ -1,11 +1,14 @@
 {
-  "displayName": "Enforce Resource Name Format",
+  "name": "resources-naming",
   "policyType": "Custom",
   "mode": "All",
+  "displayName": "Enforce Resource Name Format",
   "description": "Ensures all Azure resources follow the naming convention: <companyPrefix>-<resource-type>-<application-name>-dev/test/prod-<sequence> where companyPrefix is a parameter and sequence is exactly 3 digits",
   "metadata": {
+    "version": "1.0.0",
     "category": "Naming",
-    "version": "1.0.0"
+    "owner": "sunny.bharne@gmail.com",
+    "control": "MCF"
   },
   "parameters": {
     "companyPrefix": {

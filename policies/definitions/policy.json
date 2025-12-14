@@ -1,11 +1,11 @@
 {
-  "name": "Allowed Location",
-  "policy_type": "Custom",
+  "name": "AllowedLocation",
+  "policyType": "Custom",
   "mode": "All",
   "displayName": "Restrict Resource Location",
   "description": "Restricts resource creation to specified Azure regions.",
   "metadata": {
-    "version": "1.1.0",
+    "version": "1.1.1",
     "category": "General",
     "owner": "sunny.bharne@gmail.com",
     "control": "MCF"
@@ -21,7 +21,7 @@
       "effect": "deny"
     }
   },
-  "parameter": {
+  "parameters": {
     "allowedLocations": {
       "type": "Array",
       "metadata": {
