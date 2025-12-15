@@ -1,0 +1,56 @@
+{
+  "name": "TagsInheritance",
+  "displayName": "Built-in Initiative Example",
+  "policyType": "BuiltIn",
+  "metadata": {
+    "category": "General"
+  },
+  "parameters": {
+ n  "tagName": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Tag Name",
+        "description": "Name of the tag, such as 'environment'"
+      }
+    },
+    "tagValue": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Tag Value",
+        "description": "Value of the tag, such as 'production'"
+      }
+    }
+  },
+  "policyDefinitionGroup": [
+    {
+      "name": "tagsInheritance",
+      "displayName": "Tags Inheritance Policies",
+    }
+  ],
+  "policyDefinitionReference": [
+    {
+      "policy_definition_id": "/providers/Microsoft.Authorization/policyDefinitions/5ffd78d9-436d-4b41-a421-5baa819e3008",
+      "version": "1.0.0",
+      "parameters": {
+        "tagName": { "value": "[parameters('tagName')]" },
+        "tagValue": { "value": "[parameters('tagValue')]" }
+      }
+    },
+    {
+      "policy_definition_id": "/providers/Microsoft.Authorization/policyDefinitions/61a4d60b-7326-440e-8051-9f94394d4dd1",
+      "version": "1.0.0",
+      "parameters": {
+        "tagName": { "value": "[parameters('tagName')]" },
+        "tagValue": { "value": "[parameters('tagValue')]" }
+      }
+    },
+    {
+      "policy_definition_id": "/providers/Microsoft.Authorization/policyDefinitions/d157c373-a6c4-483d-aaad-570756956268",
+      "version": "1.0.0",
+      "parameters": {
+        "tagName": { "value": "[parameters('tagName')]" },
+        "tagValue": { "value": "[parameters('tagValue')]" }
+      }
+    }
+  ]
+}
